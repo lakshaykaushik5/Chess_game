@@ -42,6 +42,8 @@ export class Game {
       to: string;
     },
   ) {
+    console.log(move, " --- ");
+    console.log(this.moveCount, " count ");
     if (this.moveCount % 2 === 0 && socket !== this.player1) {
       return;
     }
@@ -54,6 +56,9 @@ export class Game {
     } catch (e) {
       return;
     }
+
+    console.log(move, " ---2 ");
+
     if (this.board.isGameOver()) {
       this.player1.emit(
         JSON.stringify({
@@ -64,15 +69,17 @@ export class Game {
         }),
       );
     }
+    console.log(this.moveCount, " count ");
     if (this.moveCount % 2 === 0) {
-      this.player2.emit(
+      this.player1.send(
         JSON.stringify({
           type: MOVE,
           payload: move,
         }),
       );
     } else {
-      this.player1.emit(
+      console.log(move, " ---3 ");
+      this.player2.send(
         JSON.stringify({
           type: MOVE,
           payload: move,

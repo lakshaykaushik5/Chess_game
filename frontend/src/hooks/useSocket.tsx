@@ -21,4 +21,6 @@ export const useSocket = () => {
       ws.close();
     };
   }, []);
+
+  return socket;
 };
