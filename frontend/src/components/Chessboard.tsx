@@ -17,10 +17,13 @@ export const Chessboard = ({
 }) => {
   const [from, setFrom] = useState<Square | null>(null);
   const [to, setTo] = useState<Square | null>(null);
-
-  const board_logic = (squareRepresentaion: Square | null) => {
+  const [piece, setPiece] = useState<string>();
+  const [isActive, setIsActive] = useState<boolean>(false);
+  const board_logic = (squareRepresentaion: any) => {
+    setIsActive(true);
     if (!from) {
-      setFrom(squareRepresentaion);
+      setFrom(squareRepresentaion?.p);
+      setPiece(squareRepresentaion?.c);
     } else {
       if (socket != null) {
         socket.send(
@@ -29,23 +32,30 @@ export const Chessboard = ({
             payload: {
               move: {
                 from,
-                to: squareRepresentaion,
+                to: squareRepresentaion?.p,
               },
             },
           }),
         );
       }
       setFrom(null);
-      chess.move({
-        from,
-        to: squareRepresentaion,
-      });
-      console.log(chess.board(), "board");
-      // if (player === "B") {
-      // setBoard(rotate_board());
-      // } else {
-      setBoard(chess.board());
+
+      // if (chess.move({ from, to: squareRepresentaion }) == null) {
+      //   console.log("invalid move");
       // }
+      if (piece === player) {
+        try {
+          chess.move({
+            from,
+            to: squareRepresentaion?.p,
+          });
+        } catch (e) {
+          console.log(e);
+          return;
+        }
+      }
+
+      setBoard(chess.board());
 
       console.log(from, squareRepresentaion);
     }
@@ -59,10 +69,13 @@ export const Chessboard = ({
           return (
             <div key={i} className="flex">
               {row?.map((square, j) => {
-                const squareRepresentaion = (String.fromCharCode(97 + (j % 8)) +
-                  "" +
-                  (8 - i)) as Square;
-                console.log(squareRepresentaion, typeof squareRepresentaion);
+                const squareRepresentaion = {
+                  p: (String.fromCharCode(97 + (j % 8)) +
+                    "" +
+                    (8 - i)) as Square,
+                  c: row[j]?.color.toUpperCase(),
+                };
+
                 return (
                   <div
                     onClick={() => {
@@ -73,10 +86,9 @@ export const Chessboard = ({
                   >
                     <div className="w-full flex justify-center h-full">
                       <div className="h-full justify-center flex flex-col">
-                        {console.log(player, "player")}
                         {square ? (
                           <img
-                            className={`w-16 ${player == "B" ? "rotate-180" : null}`}
+                            className={`w-16 ${player == "B" ? "rotate-180" : null} ${isActive === true ? "bg-yellow-200" : ""}`}
                             src={`/images/${square.color === "b" ? square?.type : `${square?.type}w`}.png`}
                           />
                         ) : null}

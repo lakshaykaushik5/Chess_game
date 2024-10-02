@@ -1,6 +1,7 @@
 import { WebSocket } from "ws";
 import { Chess } from "chess.js";
 import { GAME_OVER, INIT_GAME, MOVE } from "./messages";
+import { push_to_redis_queue } from "./redis_worker";
 
 export class Game {
   public player1: WebSocket;
@@ -10,7 +11,12 @@ export class Game {
   private startTime: Date;
   private moveCount: number;
 
-  constructor(player1: WebSocket, player2: WebSocket) {
+  constructor(
+    player1: WebSocket,
+    player2: WebSocket,
+    id1: number,
+    id2: number,
+  ) {
     this.player1 = player1;
     this.player2 = player2;
     this.board = new Chess();
@@ -22,6 +28,7 @@ export class Game {
         type: INIT_GAME,
         payload: {
           color: "white",
+          id: id1,
         },
       }),
     );
@@ -30,6 +37,7 @@ export class Game {
         type: INIT_GAME,
         payload: {
           color: "black",
+          id: id2,
         },
       }),
     );
@@ -41,6 +49,8 @@ export class Game {
       from: string;
       to: string;
     },
+    board: string[][],
+    id: number,
   ) {
     console.log(move, " --- ");
     console.log(this.moveCount, " count ");
@@ -53,6 +63,7 @@ export class Game {
     try {
       this.board.move(move);
       this.moveCount++;
+      push_to_redis_queue(id, board);
     } catch (e) {
       return;
     }

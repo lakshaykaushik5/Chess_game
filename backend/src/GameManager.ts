@@ -7,11 +7,13 @@ export class GameManager {
   private games: Game[];
   private pendingUser: WebSocket | null;
   private user: WebSocket[];
+  private pendingUserId: number;
 
   constructor() {
     this.games = [];
     this.pendingUser = null;
     this.user = [];
+    this.pendingUserId = 0;
   }
 
   addUser(socket: WebSocket) {
@@ -28,12 +30,18 @@ export class GameManager {
       const message = JSON.parse(data.toString());
       if (message.type === INIT_GAME) {
         if (this.pendingUser) {
-          const game = new Game(this.pendingUser, socket);
+          const game = new Game(
+            this.pendingUser,
+            socket,
+            this.pendingUserId,
+            message.id,
+          );
           this.games.push(game);
           this.pendingUser = null;
           console.log("game has started");
         } else {
           this.pendingUser = socket;
+          this.pendingUserId = message.id;
           console.log("you are entered in queue");
         }
       }
@@ -43,7 +51,12 @@ export class GameManager {
         );
         if (game) {
           // console.log(message, " === message");
-          game.makeMove(socket, message.payload.move);
+          game.makeMove(
+            socket,
+            message.payload.move,
+            message.payload.boardd,
+            message.payload.id,
+          );
         }
       }
     });
