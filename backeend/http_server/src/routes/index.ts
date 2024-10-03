@@ -1,5 +1,5 @@
 import express from "express";
-
+import { app } from "./game";
 export const router = express.Router();
 
-router.use("/gameStatus", async (res, req) => {});
+router.use("/gameStatus", app);

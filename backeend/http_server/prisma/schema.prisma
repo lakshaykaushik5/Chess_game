@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,6 +7,15 @@ datasource db {
   url      = "postgresql://postgres:password@0.0.0.0:5432/postgres"
 }
 
+model master_games {
+  id           Int     @id @default(autoincrement())
+  white_player Int
+  black_player Int
+  game_status  Boolean
+  game_result  result
+  game         String
+}
+
 model master_users {
   id           Int      @id @default(autoincrement())
   username     String
@@ -17,20 +23,12 @@ model master_users {
   usremail     String   @unique
   status       Boolean
   createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-}
-
-model master_games {
-  id           Int     @id @default(autoincrement())
-  white_player Int
-  black_player Int
-  game         String
-  game_status  Boolean
-  game_result  result
+  updatedAt    DateTime
 }
 
 enum result {
   WIN
   LOSE
   DRAW
+  PROGRESS
 }
