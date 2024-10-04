@@ -18,6 +18,11 @@ const userSchema = z.object({
     .regex(/[^a-zA-Z0-9]/, { message: "Password must contain at least one special character" });
 })
 
+export const logOut = (req:any,res:any) => {
+  res.clearCookie('token');
+  res.send({msg:"Looged out Successfully"});
+}
+
 export const loginUp = async (req:any, res:any) => {
   try{
     const {useremail, password} = req.body;
