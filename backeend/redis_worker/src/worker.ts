@@ -15,13 +15,30 @@ const worker_redis = async () => {
 
     while (true) {
       const data = await redis_worker_client.BRPOP("game_data", 0);
+      const create_data = await redis_worker_client.BRPOP("create_game", 0);
       if (data) {
         await push_to_database(data?.element);
+      }
+      if (create_data) {
+        await push_to_database_create(data?.element);
       }
     }
   } catch (err) {
     console.log(err);
   }
+};
+
+const push_to_database_create = async (data: string) => {
+  const { id1, id2 } = JSON.parse(data);
+  const create_game = await prisma.master_games.create({
+    data: {
+      white_player: id1,
+      black_player: id2,
+      game: "",
+      game_status: true,
+      game_result: "PROGRESS",
+    },
+  });
 };
 
 const push_to_database = async (data: string) => {

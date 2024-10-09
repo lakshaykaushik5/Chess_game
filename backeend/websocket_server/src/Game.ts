@@ -1,7 +1,10 @@
 import { WebSocket } from "ws";
 import { Chess } from "chess.js";
 import { GAME_OVER, INIT_GAME, MOVE } from "./messages";
-import { push_to_redis_queue } from "./redis_worker";
+import {
+  push_to_redis_queue,
+  push_to_redis_queue_create,
+} from "./redis_worker";
 
 export class Game {
   public player1: WebSocket;
@@ -41,6 +44,7 @@ export class Game {
         },
       }),
     );
+    push_to_redis_queue_create(id1, id2);
   }
 
   makeMove(

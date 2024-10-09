@@ -20,7 +20,7 @@ model master_users {
   id           Int      @id @default(autoincrement())
   username     String
   userpassword String
-  usremail     String   @unique
+  usermail     String   @unique
   status       Boolean
   createdAt    DateTime @default(now())
   updatedAt    DateTime

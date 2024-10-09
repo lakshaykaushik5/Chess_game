@@ -1,12 +1,11 @@
-import { useNavigate } from "react-router-dom";
-import { Button } from "../components/button";
-import { Chessboard } from "../components/Chessboard";
+import { Button1 } from "../game_components/button";
+import { Chessboard } from "../game_components/Chessboard";
 import { useSocket } from "../hooks/useSocket";
 import { useEffect, useState } from "react";
 import { Chess, Square, PieceSymbol, Color } from "chess.js";
-import { reverse } from "dns";
+import axios from "axios";
+import { HTTP_URL } from "@/env";
 
-// Define constants
 export const INIT_GAME = "init_Game";
 export const MOVE = "move";
 export const GAME_OVER = "game_over";
@@ -26,14 +25,7 @@ export const Game = () => {
   const [chess, setChess] = useState(new Chess());
   const [board, setBoard] = useState<(ChessPiece | null)[][]>(chess.board());
   const [player, setPlayer] = useState<string>("W");
-
-  const rotate_board = () => {
-    console.log(chess.board());
-    const arr = chess.board();
-    arr.reverse();
-    console.log(arr);
-    return arr;
-  };
+  const [gameStatus, setGameStatus] = useState<string | null>("not_started");
 
   useEffect(() => {
     if (socket === null) {
@@ -46,7 +38,7 @@ export const Game = () => {
         if (message?.payload?.color === "black") {
           setPlayer("B");
         }
-
+        setGameStatus("Started");
         setBoard(chess.board());
 
         console.log("Game Initialised");
@@ -60,6 +52,27 @@ export const Game = () => {
       }
     };
   }, [socket, chess]);
+
+  const onPlayLogic = async () => {
+    const user_details = localStorage.getItem("USER_DET");
+    const id = user_details;
+    console.log(id, user_details);
+    const payload = { id: id };
+    const response = await axios.post(
+      HTTP_URL + "/api/gameStatus/start_game",
+      payload,
+    );
+    if (response?.data?.data?.status == 200) {
+      socket?.send(
+        JSON.stringify({
+          type: INIT_GAME,
+        }),
+      );
+      // } else {
+      //   setBoard(JSON.parse(response?.data?.value));
+      //   socket = response?.data?.socket;
+    }
+  };
 
   return (
     <>
@@ -75,20 +88,17 @@ export const Game = () => {
                 board={board}
                 socket={socket}
                 player={player}
+                gameStatus={gameStatus}
               />
             </div>
             <div className="col-span-2 w-full">
-              <Button
+              <Button1
                 onClick={() => {
-                  socket?.send(
-                    JSON.stringify({
-                      type: INIT_GAME,
-                    }),
-                  );
+                  onPlayLogic();
                 }}
               >
                 Play
-              </Button>
+              </Button1>
             </div>
           </div>
         </div>

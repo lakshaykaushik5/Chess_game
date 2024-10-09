@@ -1,4 +1,4 @@
-export const Button = ({
+export const Button1 = ({
   onClick,
   children,
 }: {

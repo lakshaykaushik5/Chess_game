@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import img_chessboard from "../../public/images/phphK5JVu.png";
-import { Button } from "../components/button";
+import { Button1 } from "../game_components/button";
 
 export const Landing = () => {
   const navigate = useNavigate();
@@ -20,13 +20,13 @@ export const Landing = () => {
                 </h1>{" "}
               </div>
               <div className="mt-4 flex justify-center">
-                <Button
+                <Button1
                   onClick={() => {
                     navigate("/Game");
                   }}
                 >
                   Play Online
-                </Button>
+                </Button1>
               </div>
             </div>
           </div>
