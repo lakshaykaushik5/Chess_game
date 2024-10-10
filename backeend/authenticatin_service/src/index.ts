@@ -2,10 +2,13 @@ import express from "express";
 import { PORT } from "./env";
 import { routes } from "./routes";
 import cors from "cors";
+import coolieParser from "cookie-parser";
 
 const app = express();
 
 app.use(express.json());
+
+app.use(coolieParser());
 app.use(
   cors({
     origin: "*", // Allow all domains

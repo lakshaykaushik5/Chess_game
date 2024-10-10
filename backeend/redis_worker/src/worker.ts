@@ -28,7 +28,7 @@ const worker_redis = async () => {
   }
 };
 
-const push_to_database_create = async (data: string) => {
+const push_to_database_create = async (data: any) => {
   const { id1, id2 } = JSON.parse(data);
   const create_game = await prisma.master_games.create({
     data: {

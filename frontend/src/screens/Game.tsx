@@ -55,22 +55,32 @@ export const Game = () => {
 
   const onPlayLogic = async () => {
     const user_details = localStorage.getItem("USER_DET");
-    const id = user_details;
+    const id = parseInt(user_details);
     console.log(id, user_details);
     const payload = { id: id };
     const response = await axios.post(
       HTTP_URL + "/api/gameStatus/start_game",
       payload,
+      // { withCredentials: true },
     );
-    if (response?.data?.data?.status == 200) {
-      socket?.send(
-        JSON.stringify({
-          type: INIT_GAME,
-        }),
-      );
-      // } else {
-      //   setBoard(JSON.parse(response?.data?.value));
-      //   socket = response?.data?.socket;
+    console.log(response?.data?.data?.status, " status ");
+    if (response?.data?.data?.status === 200) {
+      // alert("working");
+      // socket?.send(
+      //   JSON.stringify({
+      //     type: INIT_GAME,
+      //   }),
+      // );
+      try {
+        socket?.send(
+          JSON.stringify({
+            type: INIT_GAME,
+          }),
+        );
+        alert("WebSocket message sent successfully");
+      } catch (error) {
+        console.error("Error sending WebSocket message:", error);
+      }
     }
   };
 

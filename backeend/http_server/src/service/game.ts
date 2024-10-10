@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 export const gameStart = async (payload: any) => {
   try {
     const id = payload.id;
-    const valid_game = await prisma.master_games.findMany({
+    const valid_game = await prisma.master_games.findFirst({
       select: {
         game: true,
       },
@@ -17,6 +17,8 @@ export const gameStart = async (payload: any) => {
         },
       },
     });
+
+    console.log(valid_game, "=======================");
 
     if (valid_game) {
       return {

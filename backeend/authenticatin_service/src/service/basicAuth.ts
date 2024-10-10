@@ -60,8 +60,12 @@ export const loginIn = async (req: any, res: any) => {
     }
     console.log(user, " ===================== ", user.id);
     const token = jwt.sign({ useremail }, SECRET_KEY, { expiresIn: "1h" });
-    res.cookie("token", token, { httpOnly: true });
-
+    res.cookie("token", token, {
+      httpOnly: true,
+      sameSite: "none",
+      secure: true,
+      domain: "localhost",
+    });
     return res.send({
       data: {
         status: 200,
