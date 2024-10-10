@@ -21,7 +21,7 @@ export const loginIn = async (req: any, res: any) => {
       password: password,
     });
 
-    console.log(useremail, " ", password);
+
 
     if (!result.success) {
       return res.send({
@@ -38,7 +38,6 @@ export const loginIn = async (req: any, res: any) => {
         usermail: useremail,
       },
     });
-    console.log(user, "-----------");
 
     if (!user) {
       return res.send({
@@ -58,7 +57,6 @@ export const loginIn = async (req: any, res: any) => {
         },
       });
     }
-    console.log(user, " ===================== ", user.id);
     const token = jwt.sign({ useremail }, SECRET_KEY, { expiresIn: "1h" });
     res.cookie("token", token, {
       httpOnly: true,
@@ -81,19 +79,12 @@ export const loginIn = async (req: any, res: any) => {
 export const signUp = async (req: any, res: any) => {
   try {
     const { username, useremail, userpassword } = req.body;
-    console.log(
-      username,
-      useremail,
-      userpassword,
-      " ============================",
-    );
     const result = userSchema.safeParse({
       name: username,
       email: useremail,
       password: userpassword,
     });
     if (!result.success) {
-      console.log(result, "result ++++++++++++++++++++++++++++=====");
       return res.send({
         data: {
           status: 401,
@@ -126,8 +117,6 @@ export const signUp = async (req: any, res: any) => {
       },
     });
     // generating tokken
-
-    console.log(user1, " ====== ", user1?.id);
 
     const token = jwt.sign({ useremail }, SECRET_KEY, { expiresIn: "1h" });
     res.cookie("token", token, { httpOnly: true });
